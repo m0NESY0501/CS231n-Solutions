@@ -1,7 +1,9 @@
 from builtins import range
 from builtins import object
 import numpy as np
+
 from past.builtins import xrange
+
 
 
 class KNearestNeighbor(object):
