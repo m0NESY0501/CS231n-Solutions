@@ -5,10 +5,60 @@ try:
     from .im2col_cython import col2im_cython, im2col_cython
     from .im2col_cython import col2im_6d_cython
 except ImportError:
-    pass
-    # print("""=========== You can safely ignore the message below if you are NOT working on ConvolutionalNetworks.ipynb ===========""")
-    # print("\tYou will need to compile a Cython extension for a portion of this assignment.")
-    # print("\tThe instructions to do this will be given in a section of the notebook below.")
+    from .im2col import im2col_indices, col2im_indices
+
+    def im2col_cython(x, field_height, field_width, padding, stride):
+        return im2col_indices(x, field_height, field_width, padding, stride)
+
+    def col2im_cython(
+        cols,
+        N,
+        C,
+        H,
+        W,
+        field_height,
+        field_width,
+        padding,
+        stride,
+    ):
+        x_shape = (N, C, H, W)
+        return col2im_indices(
+            cols,
+            x_shape,
+            field_height,
+            field_width,
+            padding,
+            stride,
+        )
+
+    def col2im_6d_cython(dx_cols, N, C, H, W, field_height, field_width, padding, stride):
+        # 纯 Python 版本，语义上模仿 im2col_cython.pyx 中的 col2im_6d_cython_inner
+        HH = field_height
+        WW = field_width
+        out_h = (H + 2 * padding - HH) // stride + 1
+        out_w = (W + 2 * padding - WW) // stride + 1
+
+        x_padded = np.zeros(
+            (N, C, H + 2 * padding, W + 2 * padding),
+            dtype=dx_cols.dtype,
+        )
+
+        for n in range(N):
+            for c in range(C):
+                for hh in range(HH):
+                    for ww in range(WW):
+                        for h in range(out_h):
+                            for w in range(out_w):
+                                x_padded[
+                                    n,
+                                    c,
+                                    stride * h + hh,
+                                    stride * w + ww,
+                                ] += dx_cols[c, hh, ww, n, h, w]
+
+        if padding > 0:
+            return x_padded[:, :, padding:-padding, padding:-padding]
+        return x_padded
 
 from .im2col import *
 
