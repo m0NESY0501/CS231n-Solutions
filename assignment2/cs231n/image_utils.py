@@ -62,18 +62,45 @@ def image_from_url(url):
     Read an image from a URL. Returns a numpy array with the pixel data.
     We write the image to a temporary file then read it back. Kinda gross.
     """
-    try:
-        f = urllib.request.urlopen(url)
-        _, fname = tempfile.mkstemp()
-        with open(fname, "wb") as ff:
-            ff.write(f.read())
-        img = imread(fname)
-        os.remove(fname)
-        return img
-    except urllib.error.URLError as e:
-        print("URL Error: ", e.reason, url)
-    except urllib.error.HTTPError as e:
-        print("HTTP Error: ", e.code, url)
+    # 在 COCO 的可视化里，这些 URL 可能会 403 / 失效 / 仅支持 https。
+    # 这里让它尽量“能返回一张图”，避免 notebook 在 plt.imshow(None) 处崩溃。
+    url = url.decode("utf-8") if isinstance(url, (bytes, bytearray)) else str(url)
+
+    candidates = [url]
+    if url.startswith("http://"):
+        candidates.append("https://" + url[len("http://") :])
+
+    last_err = None
+    for u in candidates:
+        fname = None
+        try:
+            req = urllib.request.Request(
+                u,
+                headers={
+                    "User-Agent": "Mozilla/5.0",
+                    "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+                },
+            )
+            f = urllib.request.urlopen(req, timeout=10)
+
+            fd, fname = tempfile.mkstemp()
+            os.close(fd)  # 必须关闭 fd，否则 Windows 上文件会被锁定无法删除
+            with open(fname, "wb") as ff:
+                ff.write(f.read())
+
+            img = imread(fname)
+            return img
+        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError, ValueError) as e:
+            last_err = e
+        finally:
+            if fname is not None:
+                try:
+                    os.remove(fname)
+                except PermissionError:
+                    pass  # Windows 上文件可能仍被占用；失败也不影响后续
+
+    print("Failed to load image from URL:", url, "error:", last_err)
+    return np.zeros((64, 64, 3), dtype=np.uint8)
 
 
 def load_image(filename, size=None):

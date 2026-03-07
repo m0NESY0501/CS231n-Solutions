@@ -138,7 +138,11 @@ class CaptioningRNN:
         #                                                                          #
         # You also don't have to implement the backward pass.                      #
         ############################################################################
-        # 
+        h0 = features @ W_proj + b_proj
+        x = word_embedding_forward(captions_in, W_embed)
+        x = rnn_forward(x, h0, Wx, Wh, b)
+        x = temporal_affine_forward(x, W_vocab, b_vocab)
+        loss = temporal_softmax_loss(x, captions_out, mask)
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################
@@ -202,7 +206,15 @@ class CaptioningRNN:
         # NOTE: we are still working over minibatches in this function. Also if   #
         # you are using an LSTM, initialize the first cell state to zeros.        #
         ###########################################################################
-        # 
+        prev_h = features @ W_proj + b_proj
+        current_word_idx = torch.full((N,), self._start, dtype=torch.long, device=features.device)
+        for t in range(max_length):
+          x = word_embedding_forward(current_word_idx, W_embed)
+          next_h = rnn_step_forward(x, prev_h, Wx, Wh, b)
+          scores = next_h @ W_vocab + b_vocab
+          current_word_idx = torch.argmax(scores, dim=1)
+          captions[:, t] = current_word_idx
+          prev_h = next_h
         ############################################################################
         #                             END OF YOUR CODE                             #
         ############################################################################
