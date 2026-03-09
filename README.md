@@ -1,6 +1,6 @@
-# CS231n (2025) — Complete Solutions & Custom ResNet
+# CS231n (2025) — Complete Solutions
 
-> Stanford CS231n: Deep Learning for Computer Vision — **2025 最新版** Assignment 1 & 2 全部完成  
+> Stanford CS231n: Deep Learning for Computer Vision — **2025 最新版** Assignment 1 / 2 全部完成，Assignment 3 目前完成了 **Q1 Transformer Captioning**  
 > 作者: m0NESY0501 ｜ [知乎专栏](https://www.zhihu.com/column/c_1988741880209507029)
 
 ---
@@ -49,9 +49,45 @@ Input(3×32×32)
 
 ---
 
+## ✨ Highlight: Transformer Captioning
+
+在 Assignment 3 中，我目前完成了 **Q1: Transformer_Captioning.ipynb**，实现了 **Transformer Decoder / Multi-Head Attention / Positional Encoding** 这一条主线，把图像描述任务从 **RNN Captioning** 推进到 **Attention-based Captioning**。
+
+### Transformer Captioning 设计思路
+
+```
+Image Features
+  → Linear Projection              ← 将视觉特征映射到词向量维度
+  → Memory Tokens
+
+Caption Tokens
+  → Word Embedding
+  → Positional Encoding            ← 显式注入序列位置信息
+  → Masked Self-Attention          ← 保证自回归生成时不能偷看未来 token
+  → Cross-Attention                ← 用文本 token 查询图像特征
+  → Feed Forward Network
+  → Linear to Vocabulary
+  → Greedy Decoding at Test Time
+```
+
+**已完成的核心模块：**
+
+- **Scaled Dot-Product Multi-Head Attention** — 支持 self-attention 与 cross-attention 两种模式
+- **Sinusoidal Positional Encoding** — 无需额外可学习参数即可编码 token 顺序
+- **Transformer Decoder Layer** — `self-attn → cross-attn → FFN`，每层包含残差连接与 LayerNorm
+- **CaptioningTransformer** — 从图像特征到词表分布的端到端生成模型，并支持 greedy sampling
+
+**这一部分的价值：**
+
+- 从 **循环结构** 过渡到 **并行注意力结构**，更贴近现代 NLP / CV 大模型的基本范式
+- 明确理解 **causal mask、cross-attention、位置编码** 等 Transformer 核心组件
+- 为后续完成 Assignment 3 其余问题打下 Transformer 基础
+
+---
+
 ## 📋 项目总览
 
-本仓库包含 Stanford CS231n (2025) 的完整实现，覆盖从**纯 NumPy 手写反向传播**到 **PyTorch 模型训练**再到 **RNN 图像描述生成**的全流程。
+本仓库包含 Stanford CS231n (2025) 的主要实现，覆盖从**纯 NumPy 手写反向传播**到 **PyTorch 模型训练**，再到 **RNN 图像描述** 与 **Transformer Captioning** 的实践过程。
 
 ### Assignment 1 — 从零实现经典分类器
 
@@ -75,14 +111,22 @@ Input(3×32×32)
 | **PyTorch** | [PyTorch.ipynb](assignment2/PyTorch.ipynb) | Barebone / nn.Module / nn.Sequential 三种范式 + **自定义 ResNet**（见上方 Highlight）|
 | **RNN Image Captioning** | [rnn_pytorch.py](assignment2/cs231n/classifiers/rnn_pytorch.py), [rnn_layers_pytorch.py](assignment2/cs231n/rnn_layers_pytorch.py) | Vanilla RNN + LSTM 图像描述生成（COCO 数据集）|
 
+### Assignment 3 — 当前进度：Q1 Transformer Captioning
+
+| 任务 | 核心实现 | 要点 |
+|------|---------|------|
+| **Transformer Captioning** | [transformer.py](assignment3/cs231n/classifiers/transformer.py), [transformer_layers.py](assignment3/cs231n/transformer_layers.py) | Multi-Head Attention、Positional Encoding、Decoder Layer、图像条件文本生成 |
+
+> 说明：Assignment 3 共 4 个 question，目前仓库中已完成并整理的是 **Q1 `Transformer_Captioning.ipynb`**。
+
 ---
 
 ## 🔧 技术栈
 
 - **底层实现**: NumPy（手写所有层的前向/反向传播）, SciPy, Cython（im2col 加速）
-- **框架训练**: PyTorch（CNN 训练 + RNN Captioning）
+- **框架训练**: PyTorch（CNN / RNN / Transformer Captioning）
 - **实验工具**: Jupyter Notebook, matplotlib
-- **验证方法**: 数值梯度检验（`gradient_check.py`）确保每一层反向传播正确
+- **验证方法**: 数值梯度检验（`gradient_check.py`）确保手写层的反向传播正确
 
 ## 🚀 快速开始
 
@@ -91,11 +135,11 @@ Input(3×32×32)
 pip install numpy scipy matplotlib jupyter torch
 
 # 2. 进入对应 assignment 目录并设置路径
-cd assignment2
+cd assignment3
 set PYTHONPATH=%CD%    # Windows
 
 # 3. 启动 notebook
-jupyter notebook PyTorch.ipynb
+jupyter notebook Transformer_Captioning.ipynb
 ```
 
 ## 📁 关键文件索引
@@ -122,6 +166,14 @@ assignment2/
 │   └── rnn_layers_pytorch.py        # RNN/LSTM 单步 + 序列前向/反向
 ├── PyTorch.ipynb                    # ⭐ 含自定义 ResNet 的 Open-ended Challenge
 └── RNN_Captioning_pytorch.ipynb     # RNN 图像描述实验
+
+assignment3/
+├── cs231n/
+│   ├── transformer_layers.py        # Multi-Head Attention / Positional Encoding / Decoder Layer
+│   ├── captioning_solver_transformer.py  # Transformer Captioning 训练器
+│   └── classifiers/
+│       └── transformer.py           # ⭐ Captioning Transformer
+└── Transformer_Captioning.ipynb     # Assignment 3 Q1：Transformer 图像描述生成实验
 ```
 
 ## 📝 学习记录
