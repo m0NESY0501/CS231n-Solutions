@@ -87,37 +87,37 @@ Caption Tokens
 
 ## 📋 项目总览
 
-本仓库包含 Stanford CS231n (2025) 的主要实现，覆盖从**纯 NumPy 手写反向传播**到 **PyTorch 模型训练**，再到 **RNN 图像描述** 与 **Transformer Captioning** 的实践过程。
+本仓库按 Stanford CS231n (2025) 的 assignment / notebook 组织，目前已完成 `Assignment 1`、`Assignment 2`，以及 `Assignment 3` 的 `Transformer_Captioning.ipynb`。
 
-### Assignment 1 — 从零实现经典分类器
+### Assignment 1
 
 所有前向/反向传播均使用 **纯 NumPy 向量化实现**，不依赖任何深度学习框架。
 
-| 任务 | 核心实现 | 要点 |
-|------|---------|------|
-| **Q1 KNN** | [k_nearest_neighbor.py](assignment1/cs231n/classifiers/k_nearest_neighbor.py) | 无循环/单循环/双循环三种向量化实现；交叉验证选 k |
-| **Q2 Softmax** | [softmax.py](assignment1/cs231n/classifiers/softmax.py) | 数值稳定的 softmax + 交叉熵损失；解析梯度 vs 数值梯度验证 |
-| **Q3 Two-layer Net** | [fc_net.py](assignment1/cs231n/classifiers/fc_net.py) | 完整的两层网络训练流程（含反向传播 + 正则化）|
-| **Q4 Feature Engineering** | [features.py](assignment1/cs231n/features.py) | HoG + 颜色直方图特征提取 |
-| **Q5 Fully Connected Nets** | [layers.py](assignment1/cs231n/layers.py), [fc_net.py](assignment1/cs231n/classifiers/fc_net.py) | 模块化的任意深度全连接网络；Solver 训练框架 |
+| Question | Notebook | 核心实现 | 要点 |
+|------|---------|---------|------|
+| **Q1 kNN** | [knn.ipynb](assignment1/knn.ipynb) | [k_nearest_neighbor.py](assignment1/cs231n/classifiers/k_nearest_neighbor.py) | 无循环/单循环/双循环三种向量化实现；交叉验证选 k |
+| **Q2 Softmax** | [softmax.ipynb](assignment1/softmax.ipynb) | [softmax.py](assignment1/cs231n/classifiers/softmax.py) | 数值稳定的 softmax + 交叉熵损失；解析梯度 vs 数值梯度验证 |
+| **Q3 Fully-Connected Neural Network** | [two_layer_net.ipynb](assignment1/two_layer_net.ipynb) | [fc_net.py](assignment1/cs231n/classifiers/fc_net.py) | 完整的两层网络训练流程（含反向传播 + 正则化） |
+| **Q4 Features** | [features.ipynb](assignment1/features.ipynb) | [features.py](assignment1/cs231n/features.py) | HoG + 颜色直方图特征提取 |
+| **Q5 Fully-Connected Nets** | [FullyConnectedNets.ipynb](assignment1/FullyConnectedNets.ipynb) | [layers.py](assignment1/cs231n/layers.py), [fc_net.py](assignment1/cs231n/classifiers/fc_net.py) | 模块化的任意深度全连接网络；Solver 训练框架 |
 
-### Assignment 2 — CNN、正则化技术与 PyTorch
+### Assignment 2
 
-| 任务 | 核心实现 | 要点 |
-|------|---------|------|
-| **Convolutional Networks** | [cnn.py](assignment2/cs231n/classifiers/cnn.py), [layers.py](assignment2/cs231n/layers.py) | 手写 Conv/Pool 前向反向传播（含 im2col 加速）|
-| **Batch Normalization** | [layers.py](assignment2/cs231n/layers.py) | BN/GroupNorm/LayerNorm 的前向反向传播 + 训练/测试模式切换 |
-| **Dropout** | [layers.py](assignment2/cs231n/layers.py) | Inverted Dropout 实现 + 不同 dropout rate 对训练的影响实验 |
-| **PyTorch** | [PyTorch.ipynb](assignment2/PyTorch.ipynb) | Barebone / nn.Module / nn.Sequential 三种范式 + **自定义 ResNet**（见上方 Highlight）|
-| **RNN Image Captioning** | [rnn_pytorch.py](assignment2/cs231n/classifiers/rnn_pytorch.py), [rnn_layers_pytorch.py](assignment2/cs231n/rnn_layers_pytorch.py) | Vanilla RNN + LSTM 图像描述生成（COCO 数据集）|
+| Question | Notebook | 核心实现 | 要点 |
+|------|---------|---------|------|
+| **Q1 Batch Normalization** | [BatchNormalization.ipynb](assignment2/BatchNormalization.ipynb) | [layers.py](assignment2/cs231n/layers.py) | BN/GroupNorm/LayerNorm 的前向反向传播 + 训练/测试模式切换 |
+| **Q2 Dropout** | [Dropout.ipynb](assignment2/Dropout.ipynb) | [layers.py](assignment2/cs231n/layers.py) | Inverted Dropout 实现 + 不同 dropout rate 对训练的影响实验 |
+| **Q3 Convolutional Nets** | [ConvolutionalNetworks.ipynb](assignment2/ConvolutionalNetworks.ipynb) | [cnn.py](assignment2/cs231n/classifiers/cnn.py), [layers.py](assignment2/cs231n/layers.py) | 手写 Conv/Pool 前向反向传播（含 im2col 加速） |
+| **Q4 PyTorch / Open-ended Challenge** | [PyTorch.ipynb](assignment2/PyTorch.ipynb) | [PyTorch.ipynb](assignment2/PyTorch.ipynb) | Barebone / nn.Module / nn.Sequential 三种范式 + **自定义 ResNet**（见上方 Highlight） |
+| **Q5 Image Captioning with RNNs** | [RNN_Captioning_pytorch.ipynb](assignment2/RNN_Captioning_pytorch.ipynb) | [rnn_pytorch.py](assignment2/cs231n/classifiers/rnn_pytorch.py), [rnn_layers_pytorch.py](assignment2/cs231n/rnn_layers_pytorch.py) | Vanilla RNN + LSTM 图像描述生成（COCO 数据集） |
 
-### Assignment 3 — 当前进度：Q1 Transformer Captioning
+### Assignment 3
 
-| 任务 | 核心实现 | 要点 |
-|------|---------|------|
-| **Transformer Captioning** | [transformer.py](assignment3/cs231n/classifiers/transformer.py), [transformer_layers.py](assignment3/cs231n/transformer_layers.py) | Multi-Head Attention、Positional Encoding、Decoder Layer、图像条件文本生成 |
+| Question | Notebook | 当前状态 | 核心实现 | 要点 |
+|------|---------|---------|---------|------|
+| **Q1 Image Captioning with Transformers** | [Transformer_Captioning.ipynb](assignment3/Transformer_Captioning.ipynb) | **已完成** | [transformer.py](assignment3/cs231n/classifiers/transformer.py), [transformer_layers.py](assignment3/cs231n/transformer_layers.py) | Multi-Head Attention、Positional Encoding、Decoder Layer、图像条件文本生成 |
 
-> 说明：Assignment 3 共 4 个 question，目前仓库中已完成并整理的是 **Q1 `Transformer_Captioning.ipynb`**。
+> 说明：README 目前只列出已完成并整理好的 Assignment 3 内容，即 [Transformer_Captioning.ipynb](assignment3/Transformer_Captioning.ipynb)。
 
 ---
 
